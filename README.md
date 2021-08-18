@@ -51,6 +51,8 @@ To get info about a short URL you can issue the request
 
 Finally `GET /:id` will give a `HTTP/1.1 308 Permanent Redirect` and will redirect you to the correct site.
 
+All of the endpoints also take note of the `Accept:` header, passing in a value of `application/json` will give you a json response, and `text/xml` will give back XML.
+
 ## Implementation / Design Decisions
 
 IDs are made up of at least nine characters using a base62 character set [0-9a-zA-Z] that has been pre shuffled for some added entropy.
