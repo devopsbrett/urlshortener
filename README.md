@@ -69,7 +69,7 @@ The deterministic function used to generate the prefix is PBKDF2 (With a very lo
 \end{align*}
 $$ --> 
 
-<div align="center"><img style="background: white;" src="svg/v6crVghpXe.svg"></div>
+<div align="center"><img style="background-color: white;" src="svg/v6crVghpXe.svg"></div>
 
 As shown in the above calculations we would need to make sure the function never returned more a result greater than 0xc694446f0100. This could be done using modulus (which would also mean values 00000000 - hVwxnaA7 [Base62] would be generated twice as often as any value above that), however rather than perform math operation against a uint64 value this implemetation sacrifices some potential prefixes and concentrates on the first byte (B[0]) from the result of the PBKFD2 function and applying the following, while leaving the other bytes as they are:
 
@@ -77,7 +77,7 @@ As shown in the above calculations we would need to make sure the function never
 \frac{\texttt{B[0]}}{256} * \texttt{C6}
 $$ --> 
 
-<div align="center"><img style="background: white;" src="svg/2e0yd3My5g.svg"></div>
+<div align="center"><img style="background-color: white;" src="svg/2e0yd3My5g.svg"></div>
 
 This does mean that there are 58 values that will be twice as likely to be selected as the first byte but these are distributed through all potential values. Assuming that each of the 6 bytes returned from PBKFD2 have an equal chance of being 0x00 - 0xff, and taking into account the 2 character iterator we can calculate the possible number of URL we can shorten:
 
@@ -91,7 +91,7 @@ This does mean that there are 58 values that will be twice as likely to be selec
 \end{align*}
 $$ --> 
 
-<div align="center"><img style="background: white;" src="svg/b5ol6xElnD.svg"></div>
+<div align="center"><img style="background-color: white;" src="svg/b5ol6xElnD.svg"></div>
 
 
 Which would mean should this service be extreamly well used and see 1000 new URLs each second we shouldn't run out of available IDs for 22649744 years (And hopefully within that time someone would be able to figure out a way of using all those IDs I had to discard [or maybe we'll have dinosaurs again. I'm hoping for the dinos])
