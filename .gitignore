@@ -1,0 +1,6 @@
+*.db
+test/
+shortener
+*.gob
+*.csv
+/top-1m*

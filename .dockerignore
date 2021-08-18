@@ -1,0 +1,4 @@
+*.gob
+urlshortener.db/
+test/
+top-1m*

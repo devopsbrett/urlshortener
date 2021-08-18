@@ -1,0 +1,20 @@
+version: "3.9"
+services:
+  urlshortener:
+    build:
+      context: .
+      dockerfile: urlshorten.Dockerfile
+    image: urlshorten:0.1.0
+    command: ["-bind", ":5000"]
+    ports:
+      - "5000:5000"
+    volumes:
+      - badger-data:/data
+    networks:
+      - overlay
+
+volumes:
+  badger-data:
+
+networks:
+  overlay:

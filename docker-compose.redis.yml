@@ -1,0 +1,29 @@
+version: "3.9"
+services:
+  urlshortener:
+    build:
+      context: .
+      dockerfile: urlshorten.Dockerfile
+    image: urlshorten:0.1.0
+    command: ["-bind", ":5000", "-datastore", "redis", "-db", "redis://redis:6379/0"]
+    depends_on:
+      - redis
+    networks:
+      - overlay
+    ports:
+      - "5000:5000"
+    restart: unless-stopped
+  redis:
+    image: redis:buster
+    command: ["redis-server", "--appendonly", "yes"]
+    volumes:
+      - redis-data:/data
+    networks:
+      - overlay
+    restart: unless-stopped
+
+volumes:
+  redis-data:
+
+networks:
+  overlay:
