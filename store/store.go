@@ -10,7 +10,6 @@ type Store interface {
 	RegisterVisit(*URL) error
 }
 
-// type StoreInit map[string]
 var AllStores map[string]func(string, zerolog.Logger) (Store, error)
 
 func init() {

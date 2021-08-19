@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"time"
 
-	"github.com/davecgh/go-spew/spew"
 	"github.com/devopsbrett/shortener/base62"
 	"github.com/devopsbrett/shortener/store"
 	badger "github.com/dgraph-io/badger/v3"
@@ -40,7 +39,6 @@ func NewBadgerDBStore(location string, log zerolog.Logger) (store.Store, error) 
 
 func (b *BadgerStore) RegisterVisit(u *store.URL) error {
 	u.Visits += 1
-	spew.Dump(u)
 	return b.db.Update(func(txn *badger.Txn) error {
 		urlBytes, err := json.Marshal(u)
 		if err != nil {
@@ -96,14 +94,7 @@ func (b *BadgerStore) Store(u *store.URL) error {
 }
 
 func createPrefix(u string) []byte {
-
 	prefix := base62.PBKey([]byte(u))
-	// var p byte
-	// var offset uint64
-	// for i := range prefix {
-	// 	p, offset = base62.EncodeWithOffset((hashstr[i] + byte(offset)) ^ hashstr[i+8])
-	// 	prefix[i] = p
-	// }
 	return prefix.Bytes()
 }
 
@@ -129,9 +120,7 @@ func (b *BadgerStore) fetchKey(id []byte, u *store.URL) error {
 		if err != nil {
 			return err
 		}
-		// var urlBytes []byte
 		err = item.Value(func(val []byte) error {
-			// urlBytes = append([]byte{}, val...)
 			return json.Unmarshal(val, u)
 		})
 		return err

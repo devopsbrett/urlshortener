@@ -51,7 +51,7 @@ func main() {
 
 	s, err := store.AllStores[storageDB](dbLocation, log.With().Str("service", "datastore").Logger())
 	if err != nil {
-		log.Fatal().Err(err).Msg("Unable to open kv store for writing. Set -db ':memory:' if persistence is not required")
+		log.Fatal().Err(err).Msg("Unable to open kv store for writing. Set -db 'memory' if persistence is not required")
 	}
 	defer s.Close()
 

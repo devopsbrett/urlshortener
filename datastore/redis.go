@@ -70,7 +70,6 @@ func (r *RedisStore) fetchKey(id string, u *store.URL) error {
 	}
 	if uadded, ok := uhash["date_added"]; ok {
 		u.DateAdded.UnmarshalText([]byte(uadded))
-		// 	u.DateAdded = uadded
 	}
 	u.Visits = int(r.db.IncrBy(ctx, "visits:"+id, 0).Val())
 	return nil
@@ -113,9 +112,6 @@ func mapKeyVals(u *store.URL) map[string]interface{} {
 	retMap := make(map[string]interface{})
 	retMap["id"] = u.ID
 	retMap["url"] = u.URL
-	// if added, err := u.DateAdded.MarshalText(); err != nil {
-	// 	retMap["date_added"] = string(added)
-	// }
 	retMap["date_added"] = u.DateAdded
 	retMap["creator_ip"] = u.CreatorIP
 	return retMap

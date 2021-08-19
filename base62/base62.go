@@ -77,10 +77,8 @@ func OrderedFromB62(b []byte) *b62 {
 }
 
 func FromHex(h []byte) *b62 {
-	// power := 1
 	var counter, power int64
 	power = 1
-	// counter := 0
 
 	for i := len(h) - 1; i >= 0; i-- {
 		counter += power * int64(h[i])
@@ -171,7 +169,6 @@ func ItoFixedWidthb(i uint64, size int) []byte {
 }
 
 func Encode(i int, base int, bs []byte) []byte {
-	// mod := i % base
 	bs = append(bs, 0)
 	copy(bs[1:], bs[:])
 	bs[0] = charSet[i%base]
@@ -185,7 +182,6 @@ func Encode(i int, base int, bs []byte) []byte {
 func PBKey(url []byte) Base62 {
 	salt := []byte{0x4a, 0x13, 0x76, 0xd8, 0xe3, 0xae, 0x95, 0x60, 0x89, 0x7d, 0xb5, 0xdb, 0x9c, 0x7f, 0x07, 0x62}
 	dk := pbkdf2.Key(url, salt, 8, 6, sha1.New)
-	// dk[0] = dk[0] % 0xc6 // Mod here would mean the keys would not spead evenly. Giving preference to 0 - 58
 	disKeys := (float64(dk[0]) / 256.0) * float64(0xc6)
 	dk[0] = byte(disKeys)
 

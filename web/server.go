@@ -1,6 +1,7 @@
 package web
 
 import (
+	"context"
 	"encoding/json"
 	"encoding/xml"
 	"fmt"
@@ -9,7 +10,6 @@ import (
 	"strings"
 	"time"
 
-	"github.com/davecgh/go-spew/spew"
 	"github.com/devopsbrett/shortener/store"
 	"github.com/gorilla/handlers"
 	"github.com/naoina/denco"
@@ -23,26 +23,12 @@ type Server struct {
 	log      zerolog.Logger
 }
 
-func NewServer(bindAddr string, store store.Store, log zerolog.Logger) *Server {
-	// router := denco.NewMux()
-	// router.GlobalOPTIONS = http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-	// 	if r.Header.Get("Access-Control-Request-Method") != "" {
-	// 		// Set CORS headers
-	// 		header := w.Header()
-	// 		header.Set("Access-Control-Allow-Methods", header.Get("Allow"))
-	// 		header.Set("Access-Control-Allow-Origin", "*")
-	// 	}
-
-	// 	// Adjust status code to 204
-	// 	w.WriteHeader(http.StatusNoContent)
-	// })
-
+func NewServer(ctx context.Context, bindAddr string, store store.Store, log zerolog.Logger) *Server {
 	return &Server{
 		bindAddr: bindAddr,
 		store:    store,
 		log:      log,
 	}
-	// err := srv.addRoutes()
 }
 
 func (s *Server) buildHandlers() (http.Handler, error) {
@@ -53,10 +39,6 @@ func (s *Server) buildHandlers() (http.Handler, error) {
 		mux.POST("/api/v1/shorten", s.postShortenHandler),
 		mux.GET("/api/v1/lookup/:id", s.lookupHandler),
 	})
-	// s.handlers = append(s.handlerss.router.GET("/:id", s.redirectHandler)
-	// s.router.POST("/api/v1/shorten/*url", s.shortenHandler)
-	// // api.PathPrefix("/shorten").Handler(http.StripPrefix("/api/v1/shorten", s.shortenHandler))
-	// s.router.GET("/api/v1/lookup/:id", s.lookupHandler)
 	return handler, err
 }
 
@@ -81,22 +63,17 @@ func (s *Server) newURL(w http.ResponseWriter, r *http.Request, url string) {
 		return
 	}
 	s.log.Info().Str("Original URL", u.URL).Str("Shortened", string(u.ID)).Msg("Stored shortened url")
-	// md5int, err := strconv.ParseInt(string(h.Sum(nil)), 16, 64)
-	// spew.Dump(md5int)
-	// spew.Dump(err)
 	s.urlDisplay(w, r, u)
 }
 
 func (s *Server) redirectHandler(w http.ResponseWriter, r *http.Request, ps denco.Params) {
 	id := ps.Get("id")
 	u, err := s.store.Fetch(id)
-	spew.Dump(u)
 	if err != nil {
 		w.WriteHeader(http.StatusNotFound)
 		return
 	}
 	err = s.store.RegisterVisit(&u)
-	spew.Dump(err)
 	w.Header().Add("location", u.URL)
 	w.WriteHeader(http.StatusPermanentRedirect)
 }
@@ -154,9 +131,8 @@ func (s *Server) Serve() error {
 		return err
 	}
 	srv := &http.Server{
-		Handler: handlers.LoggingHandler(os.Stdout, handler),
-		Addr:    s.bindAddr,
-		// Good practice: enforce timeouts for servers you create!
+		Handler:      handlers.LoggingHandler(os.Stdout, handler),
+		Addr:         s.bindAddr,
 		WriteTimeout: 10 * time.Second,
 		ReadTimeout:  10 * time.Second,
 	}
