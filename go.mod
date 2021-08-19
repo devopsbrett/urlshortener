@@ -3,7 +3,6 @@ module github.com/devopsbrett/shortener
 go 1.16
 
 require (
-	github.com/davecgh/go-spew v1.1.1
 	github.com/dgraph-io/badger/v3 v3.2103.1
 	github.com/felixge/httpsnoop v1.0.2 // indirect
 	github.com/go-redis/redis/v8 v8.11.0

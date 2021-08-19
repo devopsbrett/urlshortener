@@ -57,17 +57,24 @@ func main() {
 
 	webserv := web.NewServer(bindAddr, s, log.With().Str("service", "webserver").Logger())
 
-	// spew.Dump(store.AllStores)
-
-	go func() {
-		if err := webserv.Serve(); err != nil {
-			log.Fatal().Err(err).Msg("Error from web server. Shutting down")
-		}
-	}()
-
+	shutdown := make(chan bool, 1)
 	signalChan := make(chan os.Signal, 1)
 	signal.Notify(signalChan, syscall.SIGINT)
 
-	<-signalChan
-	log.Info().Msg("Gracefully stopping server... kinda")
+	go func() {
+		<-signalChan
+		log.Info().Msg("Server is shutting down")
+		if err := webserv.Shutdown(); err != nil {
+			log.Fatal().Err(err).Msg("Unable to gracefully shutdown the webserver")
+		}
+		close(shutdown)
+	}()
+	// spew.Dump(store.AllStores)
+
+	if err := webserv.Serve(); err != nil {
+		log.Fatal().Err(err).Msg("Error from web server. Shutting down")
+	}
+
+	<-shutdown
+	log.Info().Msg("Server Stopped")
 }

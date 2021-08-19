@@ -21,9 +21,10 @@ type Server struct {
 	store    store.Store
 	handlers []denco.Handler
 	log      zerolog.Logger
+	srv      *http.Server
 }
 
-func NewServer(ctx context.Context, bindAddr string, store store.Store, log zerolog.Logger) *Server {
+func NewServer(bindAddr string, store store.Store, log zerolog.Logger) *Server {
 	return &Server{
 		bindAddr: bindAddr,
 		store:    store,
@@ -130,13 +131,24 @@ func (s *Server) Serve() error {
 	if err != nil {
 		return err
 	}
-	srv := &http.Server{
-		Handler:      handlers.LoggingHandler(os.Stdout, handler),
-		Addr:         s.bindAddr,
-		WriteTimeout: 10 * time.Second,
-		ReadTimeout:  10 * time.Second,
+	s.srv = &http.Server{
+		Handler:           handlers.LoggingHandler(os.Stdout, handler),
+		Addr:              s.bindAddr,
+		WriteTimeout:      10 * time.Second,
+		ReadHeaderTimeout: 5 * time.Second,
+		ReadTimeout:       30 * time.Second,
 	}
-	srv.SetKeepAlivesEnabled(false)
 
-	return srv.ListenAndServe()
+	if err := s.srv.ListenAndServe(); err != nil && err != http.ErrServerClosed {
+		return err
+	}
+	return nil
+}
+
+func (s *Server) Shutdown() error {
+	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
+	defer cancel()
+
+	s.srv.SetKeepAlivesEnabled(false)
+	return s.srv.Shutdown(ctx)
 }
