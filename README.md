@@ -30,6 +30,21 @@ vegeta_1        | Success       [ratio]                           100.00%
 vegeta_1        | Status Codes  [code:count]                      200:300000
 vegeta_1        | Error Set:
 ```
+
+**UPDATE 20/08/21**
+
+After tweeking the server slightly and allowing HTTP Keep Alives (They were originally disabled due to bugs when testing on my Mac, which later turned out to be an issue with file descriptors ulimit) the follow test results were acheived
+
+```
+vegeta_1        | Requests      [total, rate, throughput]         300000, 1000.00, 1000.00
+vegeta_1        | Duration      [total, attack, wait]             5m0s, 5m0s, 825.827µs
+vegeta_1        | Latencies     [min, mean, 50, 90, 95, 99, max]  297.624µs, 820.66µs, 684.799µs, 1.078ms, 1.399ms, 3.869ms, 49.857ms
+vegeta_1        | Bytes In      [total, mean]                     10200000, 34.00
+vegeta_1        | Bytes Out     [total, mean]                     0, 0.00
+vegeta_1        | Success       [ratio]                           100.00%
+vegeta_1        | Status Codes  [code:count]                      200:300000
+```
+
 ## Exposed Paths
 
 To shorten a URL you have 2 options:
