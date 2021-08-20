@@ -2,7 +2,7 @@ version: "3.9"
 services:
   vegeta:
     image: peterevans/vegeta
-    command: "/bin/sh -c 'vegeta attack -targets /data/top-1m-remote.txt -format http -duration=300s -rate=${REQ_RATE} > testout.bin && vegeta report testout.bin'"
+    command: "/bin/sh -c 'vegeta attack -targets /data/top-1m-remote.txt -format http -duration=${ATTACK_DURATION} -rate=${REQ_RATE} > testout.bin && vegeta report testout.bin'"
     volumes:
       - ./test_fixtures/top-1m-remote.txt:/data/top-1m-remote.txt
     networks:

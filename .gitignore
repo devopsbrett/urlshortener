@@ -4,3 +4,4 @@ shortener
 *.gob
 *.csv
 /top-1m*
+.DS_Store
